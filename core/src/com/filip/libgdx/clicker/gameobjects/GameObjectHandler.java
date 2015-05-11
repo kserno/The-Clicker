@@ -11,6 +11,7 @@ public class GameObjectHandler {
 		this.width = width;
 		this.height = height;
 		obs = new Obstacle[3];
+		figure = new Figure(width/10,height/4, width/10, height/4);
 		
 	}
 	

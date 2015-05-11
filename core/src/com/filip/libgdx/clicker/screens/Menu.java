@@ -31,7 +31,6 @@ public class Menu implements Screen{
 		cam = new OrthographicCamera();
 		cam.setToOrtho(true, width, height);
 		
-		
 		batcher = new SpriteBatch();
 		batcher.setProjectionMatrix(cam.combined);
 		
@@ -43,7 +42,7 @@ public class Menu implements Screen{
 	    stage.clear();
 	    
 	    imgbPlay = new ImageButton(sdPlay);
-	    imgbPlay.setPosition(width/2 - width/8, height/ 3 *2);
+	    imgbPlay.setPosition(width/2 - width/8, (height/ 3));
 	    imgbPlay.addListener(new InputListener() {
 	    	public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new GameScreen(width, height));
@@ -52,7 +51,7 @@ public class Menu implements Screen{
 	    });
 	
 		imgbHiscore = new ImageButton(sdHiscore);
-		imgbHiscore.setPosition(width/2 - width/8, height/3 );
+		imgbHiscore.setPosition(width/2 - width/8, height/3 * 2 );
 		imgbHiscore.addListener(new InputListener() {
 			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
 				game.setScreen(new HiscoreScreen(width, height));
@@ -79,7 +78,7 @@ public class Menu implements Screen{
 	    batcher.begin();
 	    batcher.enableBlending();
 	    imgbPlay.draw(batcher, 50f);
-	    //imgbHiscore.draw(batcher, 50f);
+	    imgbHiscore.draw(batcher, 50f);
 	    batcher.end();
 	    
 	    

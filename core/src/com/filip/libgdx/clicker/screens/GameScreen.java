@@ -1,8 +1,10 @@
 package com.filip.libgdx.clicker.screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.filip.libgdx.clicker.gameworld.GameRenderer;
 import com.filip.libgdx.clicker.gameworld.GameWorld;
+import com.filip.libgdx.clicker.helpers.InputHandler;
 
 public class GameScreen implements Screen {
 	
@@ -12,8 +14,10 @@ public class GameScreen implements Screen {
 	private float runTime;
 	
 	public GameScreen(int width, int height) {
+		Gdx.app.log("Martina ", "je krasna a dokonala bubka <3");
 		world = new GameWorld(width, height);
 		renderer = new GameRenderer(world);
+		Gdx.input.setInputProcessor(new InputHandler(world));
 	}
 
 	@Override
@@ -27,7 +31,6 @@ public class GameScreen implements Screen {
 		// TODO Auto-generated method stub
 		gameSpeed += delta/6;
 		runTime += delta;
-		
 		world.update(delta,gameSpeed,runTime);
 		renderer.update(delta,gameSpeed,runTime);
 		

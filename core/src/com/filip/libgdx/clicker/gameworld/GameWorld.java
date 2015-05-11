@@ -21,6 +21,10 @@ public class GameWorld {
 		currentState= GameState.READY;
 		
 	}
+	
+	public void start() {
+		currentState = GameState.RUNNING;
+	}
 
 	public void update(float delta,float gameSpeed,float runTime) {
 		// TODO Auto-generated method stub
@@ -65,6 +69,18 @@ public class GameWorld {
 	
 	public GameState getCurrentState() {
 		return currentState;
+	}
+
+	public void keyUp() {
+		// TODO Auto-generated method stub
+		Gdx.app.log("Martinka ", "hore");
+		handler.getFigure().jump();		
+	}
+
+	public void keyDown() {
+		// TODO Auto-generated method stub
+		Gdx.app.log("Martinka ", "dole");
+		handler.getFigure().slide();
 	}
 	
 
