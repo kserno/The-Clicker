@@ -8,11 +8,13 @@ public class Figure extends GameObject  {
 	private float rotation;
 	private float startingY;
 	
+	private Boolean isJumping= false;
+	
 	
 	public Figure(float x, float y, int width, int height) {
 		// TODO Auto-generated constructor stub
 		super(x,y,width,height);
-		acceleration = new Vector2(0,300);
+		acceleration = new Vector2(0,400);
 		rotation = 0f;
 		startingY = y;
 	}
@@ -20,8 +22,12 @@ public class Figure extends GameObject  {
 	@Override
 	protected void update(float delta) {
 		// TODO Auto-generated method stub
-		if (position.y!=startingY) {
-			velocity.add(acceleration.cpy().scl(delta));
+		if (position.y<=(int)startingY) {
+			velocity.add(acceleration.cpy().scl(delta));		
+		}
+		if (position.y>(int)startingY) {
+			position.y=startingY;
+			isJumping = false;
 		}
 		super.update(delta);
 		
@@ -29,7 +35,8 @@ public class Figure extends GameObject  {
 
 	public void jump() {
 		// TODO Auto-generated method stub
-		velocity.y = -140;		
+		isJumping= true;
+		velocity.y = -200;		
 	}
 	
 	public void slide() {
@@ -40,5 +47,8 @@ public class Figure extends GameObject  {
 		return rotation;
 	}
 	
+	public Boolean getIsJumping() {
+		return isJumping;
+	}
 
 }

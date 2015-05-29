@@ -7,8 +7,8 @@ import com.filip.libgdx.clicker.MainClass;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 400;
-		config.width = 400;
+		config.height = 600;
+		config.width = 600;
 		config.title = "The Clicker";
 		//config.addIcon(, fileType);
 		new LwjglApplication(new MainClass(), config);

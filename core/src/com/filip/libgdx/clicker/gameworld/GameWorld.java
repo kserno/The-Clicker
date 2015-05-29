@@ -24,6 +24,7 @@ public class GameWorld {
 	
 	public void start() {
 		currentState = GameState.RUNNING;
+		Gdx.app.log("world","start");
 	}
 
 	public void update(float delta,float gameSpeed,float runTime) {
@@ -33,7 +34,7 @@ public class GameWorld {
 			updateReady(delta);
 		break;
 		case RUNNING :
-			updateRunning(delta);
+			updateRunning(delta, gameSpeed, runTime);
 		break;
 		case GAMEOVER:
 			updateGameOver(delta);
@@ -62,9 +63,9 @@ public class GameWorld {
 		
 	}
 
-	private void updateRunning(float delta) {
+	private void updateRunning(float delta, float gameSpeed, float runTime) {
 		// TODO Auto-generated method stub
-		handler.update(delta);		
+		handler.update(delta, gameSpeed, runTime);		
 	}
 	
 	public GameState getCurrentState() {
@@ -81,6 +82,10 @@ public class GameWorld {
 		// TODO Auto-generated method stub
 		Gdx.app.log("Martinka ", "dole");
 		handler.getFigure().slide();
+	}
+	
+	public GameObjectHandler getHandler() {
+		return handler;
 	}
 	
 

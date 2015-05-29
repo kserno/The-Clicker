@@ -14,7 +14,6 @@ public class GameScreen implements Screen {
 	private float runTime;
 	
 	public GameScreen(int width, int height) {
-		Gdx.app.log("Martina ", "je krasna a dokonala bubka <3");
 		world = new GameWorld(width, height);
 		renderer = new GameRenderer(world);
 		Gdx.input.setInputProcessor(new InputHandler(world));
