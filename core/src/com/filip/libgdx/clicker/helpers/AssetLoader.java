@@ -1,6 +1,9 @@
 package com.filip.libgdx.clicker.helpers;
 
+import jdk.internal.org.objectweb.asm.tree.JumpInsnNode;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -20,7 +23,24 @@ public class AssetLoader {
 	
 	public static SpriteDrawable sdPlay, sdHiscore;
 	
+	public static Sprite gBackground;
+	
+	public static Animation coinAnimation;
+	
+	public static TextureRegion[] tr2;
+	
+	public static TextureRegion[] spikes;
+	
+	public static Preferences prefs;
+	
+	public static Animation jumpAnimation;
+	public static Animation idleAnimation;
+	
 	public static void load(int width, int height) {
+        prefs = Gdx.app.getPreferences("TheClicker");
+		if (!prefs.contains("coins")) {
+			prefs.putInteger("coins", 0);
+		}
 		Texture texture = new Texture(Gdx.files.internal("data/play.png"));
 		Sprite sprite = new Sprite(texture);
 		sprite.setSize(width/4, height/10);
@@ -37,19 +57,71 @@ public class AssetLoader {
 		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 		tr = new TextureRegion[(FRAME_COLS*FRAME_ROWS)];
 		for (int i = 0; i<FRAME_COLS; i++) {
-			tr[i] = new TextureRegion(texture,180*i,32,180,211 );
-			tr[i+5] = new TextureRegion(texture,180*i,251,180,211);
+			tr[i] = new TextureRegion(texture,280*i,44,280,343 );
+			tr[i+5] = new TextureRegion(texture,280*i,389,280,331);
 			tr[i].flip(false, true);
 			tr[i+5].flip(false, true);
 		}
 		
-		figureAnimation = new Animation(0.2f, tr);
+		figureAnimation = new Animation(0.1f, tr);
 		figureAnimation.setPlayMode(PlayMode.LOOP);
 		
+		texture = new Texture(Gdx.files.internal("data/background.png"));
+		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		gBackground= new Sprite(texture);
+		gBackground.flip(false, true);
+		gBackground.setSize(texture.getWidth(), height);
 		
+		texture = new Texture(Gdx.files.internal("data/coin.png"));
+		texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+		tr2 = new TextureRegion[10];
+		for (int i=0; i<10; i++) {
+			tr2[i] = new TextureRegion(texture, (texture.getWidth()/10)*i, 0, texture.getWidth()/10, texture.getHeight() );
+		}
 		
+		coinAnimation=  new Animation(0.07f, tr2);
+		coinAnimation.setPlayMode(PlayMode.LOOP);
 		
+		spikes = new TextureRegion[4];
+		for (int i=0; i<4;i++) {
+			texture = new Texture(Gdx.files.internal("data/spike"+String.valueOf(i+1)+".png"));
+			texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
+			spikes[i] = new TextureRegion(texture);
+			spikes[i].flip(false, true);
+		}
 		
+		TextureRegion[] tr3 = new TextureRegion[8];
+		texture = new Texture(Gdx.files.internal("data/jump.png"));
+		for (int i=0; i<2; i++) {
+			for (int i2=0; i2<4; i2++) {
+				tr3[i*4+i2]= new TextureRegion(texture, (texture.getWidth()/4)*i2, (texture.getHeight()/2)*i, texture.getWidth()/4, texture.getHeight()/2 );
+				tr3[i*4+i2].flip(false, true);
+			}
+		}
+		
+		jumpAnimation = new Animation(0.04f, tr3);
+		jumpAnimation.setPlayMode(PlayMode.LOOP);
+		
+		texture = new Texture(Gdx.files.internal("data/idle.png"));
+		TextureRegion[] tr4 = new TextureRegion[2];
+		tr4[0]=new TextureRegion(texture,0, 0,texture.getWidth()/2, texture.getHeight());
+		tr4[0].flip(false, true);
+		tr4[1] = new TextureRegion(texture, texture.getWidth()/2,0, texture.getWidth()/2, texture.getHeight());
+		tr4[1].flip(false, true);
+		
+		idleAnimation = new Animation(0.2f, tr4);
+		idleAnimation.setPlayMode(PlayMode.LOOP);
+	}
+	
+	public static int getCoins() {
+		return prefs.getInteger("coins");
+	}
+
+	public static void addCoin() {
+		// TODO Auto-generated method stub
+		int val = getCoins();
+		prefs.putInteger("coins", val);
+		prefs.flush();
 	}
 
 }

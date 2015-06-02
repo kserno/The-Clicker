@@ -6,6 +6,7 @@ public class HiscoreScreen implements Screen {
 
 	public HiscoreScreen(int width, int height) {
 		// TODO Auto-generated constructor stub
+		
 	}
 
 	@Override
