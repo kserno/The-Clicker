@@ -3,6 +3,7 @@ package com.filip.libgdx.clicker.gameworld;
 import com.badlogic.gdx.Gdx;
 import com.filip.libgdx.clicker.gameobjects.GameObjectHandler;
 import com.filip.libgdx.clicker.helpers.AssetLoader;
+import com.filip.libgdx.clicker.networklayer.reqHiscores;
 
 public class GameWorld {
 	
@@ -10,8 +11,7 @@ public class GameWorld {
 	private int height;
 	private int width;
 	private GameObjectHandler handler;
-	private boolean isFreezed;
-	
+	private float score;
 	public enum GameState {
 		READY, RUNNING, GAMEOVER,PAUSE ,HISCORE
 	}
@@ -25,13 +25,12 @@ public class GameWorld {
 	
 	public void start() {
 		currentState = GameState.RUNNING;
-		Gdx.app.log("world","start");
 	}
 
 	public void update(float delta,float gameSpeed,float runTime, float runningTime) {
 		// TODO Auto-generated method stub
 		handler.update(delta, runTime, gameSpeed, runningTime);
-
+		score += gameSpeed/(1/delta);
 	}
 	
 	public GameState getCurrentState() {
@@ -51,14 +50,43 @@ public class GameWorld {
 	public GameObjectHandler getHandler() {
 		return handler;
 	}
-
-	public void freeze() {
-		// TODO Auto-generated method stub
-		isFreezed = true;
-	}
 	
 	public void coinGained() {
 		AssetLoader.addCoin();
 	}
 
+	public int getScore() {
+		return (int) score;
+	}
+	
+	public void gameOver() { 
+		if ((int) score > AssetLoader.getHiscore()) {
+			currentState = GameState.HISCORE;
+			AssetLoader.setHiscore((int)score);
+		} else {
+			currentState = GameState.GAMEOVER;
+		}
+	}
+
+	
+	public void pause() {
+		currentState = GameState.PAUSE;
+	}
+	
+	public void resume() {
+		currentState = GameState.RUNNING;
+	}
+
+	public void doubleJumpGained() {
+		// TODO Auto-generated method stub
+		handler.getFigure().doubleJumpGained();
+		
+	}
+	
+	public void restart() {
+		currentState= GameState.READY;
+		handler.restart();
+		score = 0;
+	}
+	
 }

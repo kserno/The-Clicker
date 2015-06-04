@@ -2,8 +2,8 @@ package com.filip.libgdx.clicker.gameobjects;
 
 public class Coin extends Boost{
 
-	public Coin(float x, float y, int width, int height) {
-		super(x, y, width, height);
+	public Coin(Ground ground, int totalWidth, int totalHeight, float gameSpeed, int gap) {
+		super(totalWidth, ground.getY()-gap, totalWidth/15, totalWidth/15, gameSpeed);
 		// TODO Auto-generated constructor stub
 	}
 

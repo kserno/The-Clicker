@@ -1,5 +1,7 @@
 package com.filip.libgdx.clicker.gameworld;
 
+import org.omg.CORBA.portable.IDLEntity;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,11 +13,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.filip.libgdx.clicker.gameobjects.Boost;
+import com.filip.libgdx.clicker.gameobjects.DoubleObstacle;
 import com.filip.libgdx.clicker.gameobjects.Figure;
 import com.filip.libgdx.clicker.gameobjects.GameObjectHandler;
 import com.filip.libgdx.clicker.gameobjects.Ground;
+import com.filip.libgdx.clicker.gameobjects.LowerObstacle;
 import com.filip.libgdx.clicker.gameobjects.Obstacle;
+import com.filip.libgdx.clicker.gameobjects.UpperObstacle;
 import com.filip.libgdx.clicker.helpers.AssetLoader;
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 public class GameRenderer {
 	
@@ -26,9 +32,7 @@ public class GameRenderer {
 	private SpriteBatch batcher;
 	
 	// Game Objects
-	private Figure figure;
-	private Obstacle[] obs;
-	
+	private Figure figure;	
 	private Animation figureAnimation;
 	
 	private int height, width;
@@ -69,7 +73,6 @@ public class GameRenderer {
 	private void initGameObjects() {
 		// TODO Auto-generated method stub
 		figure = myWorld.getHandler().getFigure();
-		obs = myWorld.getHandler().getObs();
 		ground = myWorld.getHandler().getGround();
 		handler = myWorld.getHandler();
 	}
@@ -87,50 +90,43 @@ public class GameRenderer {
 		//rendering 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 	    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		batcher.begin();
-		drawBackground(delta, gameSpeed);
-		batcher.enableBlending();
-		if (!figure.getIsJumping()) {
-			batcher.draw(figureAnimation.getKeyFrame(runTime),figure.getX(), figure.getY(), figure.getWidth()/2.0f, figure.getHeight()/2.0f, figure.getWidth(), figure.getHeight(),1,1, figure.getRotation());
-		} else {
-			batcher.draw(AssetLoader.jumpAnimation.getKeyFrame(runTime), figure.getX(),figure.getY(), figure.getWidth(), figure.getHeight());
-		}		
-		for (int i=0; i<handler.getObs().length; i++) {
-			if (myWorld.getHandler().getObs()[i] !=null) batcher.draw(AssetLoader.spikes[0], myWorld.getHandler().getObs()[i].getX(),myWorld.getHandler().getObs()[i].getY(),myWorld.getHandler().getObs()[i].getWidth(),myWorld.getHandler().getObs()[i].getHeight());
-		}
-		batcher.draw(AssetLoader.idleAnimation.getKeyFrame(runTime), 20,20,50,100);
-		batcher.end();
+	    drawBackground(delta, gameSpeed);
 		
-		shapeRenderer.begin(ShapeType.Line);
-		shapeRenderer.setColor(Color.WHITE);
-		shapeRenderer.rect(figure.getBoundingRect().getX(),figure.getBoundingRect().getY(), figure.getBoundingRect().getWidth(), figure.getBoundingRect().getHeight());
-		shapeRenderer.end();
-		
-		shapeRenderer.begin(ShapeType.Filled);	
-		shapeRenderer.setColor(ground.getColor());
-		shapeRenderer.rect(ground.getX(), ground.getY(), ground.getWidth(), ground.getHeight());
-		shapeRenderer.end();
+		drawGround();
 		
 		switch(myWorld.getCurrentState()) {
 		case READY :
-			updateReady(delta);
+			updateReady(delta, runTime);
 		break;
 		case RUNNING :
 			updateRunning(delta, runTime);
 		break;
 		case GAMEOVER :
-			updateGameOver(delta);
+			updateGameOver(delta, runTime);
 		break;
 		case HISCORE :
-			updateHiscore(delta);
+			updateHiscore(delta, runTime);
 		break;
 		}
 		
 	}
 
-	private void drawBackground(float delta, float gameSpeed) {
+	private void drawGround() {
 		// TODO Auto-generated method stub
+		shapeRenderer.begin(ShapeType.Filled);	
+		shapeRenderer.setColor(ground.getColor());
+		shapeRenderer.rect(ground.getX(), ground.getY(), ground.getWidth(), ground.getHeight());
+		if (handler.getIsHoleActive()) {
+			shapeRenderer.setColor(109/255f, 208/255f,247/255f, 1);
+			shapeRenderer.rect(handler.getHole().getX(), handler.getHole().getY(), handler.getHole().getWidth(), handler.getHole().getHeight());
+		}
+		shapeRenderer.end();
+		
+	}
+
+	private void drawBackground(float delta, float gameSpeed) {		
+		// TODO Auto-generated method stub
+		 batcher.begin();
 		if (background.getX()<0) background.setX(width);
 		
 		offsetX=bgSpeed * delta * gameSpeed;
@@ -140,40 +136,89 @@ public class GameRenderer {
 		background.draw(batcher);
 		background.translateX(width);
 		background.draw(batcher);
-		
+		batcher.end();
 	}
 
-	private void updateHiscore(float delta) {
+	private void updateHiscore(float delta, float runTime) {
 		// TODO Auto-generated method stub
+		batcher.begin();
+		String str = "NEW HISCORE ! Your new hiscore is" + myWorld.getScore() +"Click to restart";
+		AssetLoader.shadow.draw(batcher, str, 0, height/2);
+		AssetLoader.font.draw(batcher, str, 0, height/2);
+		TextureRegion temp = null; 
 		
+		if (handler.getObstacle()!=null && handler.getObstacle() instanceof UpperObstacle) {
+			temp = AssetLoader.fSpikes[handler.getObstacle().getSpriteN()];
+		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle || handler.getObstacle() instanceof DoubleObstacle){
+			temp = AssetLoader.spikes[handler.getObstacle().getSpriteN()];
+		}
+		
+		if (handler.getObstacle()!=null) batcher.draw(temp, handler.getObstacle().getX(),handler.getObstacle().getY(),handler.getObstacle().getWidth(),handler.getObstacle().getHeight());
+		
+		
+		if (handler.getIsBoostActive()) batcher.draw(coinAnimation.getKeyFrame(runTime), handler.getBoost().getX(), handler.getBoost().getY(), handler.getBoost().getWidth(), handler.getBoost().getHeight());
+		
+		batcher.end();
 	}
 
-	private void updateReady(float delta) {
+	private void updateReady(float delta,float runTime) {
 		// TODO Auto-generated method stub
-		
+		batcher.begin();
+		String str = "Press any button";
+		AssetLoader.shadow.draw(batcher, str, 0, height/2);
+		AssetLoader.font.draw(batcher, str, 0, height/2);
+		batcher.draw(AssetLoader.idleAnimation.getKeyFrame(runTime), figure.getX(), figure.getY(), figure.getWidth(), figure.getHeight());
+		batcher.end();
 	}
 
 	private void updateRunning(float delta, float runTime) {
 		// TODO Auto-generated method stub
-		/*shapeRenderer.begin(ShapeType.Filled);
-		
-		shapeRenderer.setColor(Color.CYAN);
-		shapeRenderer.rect(0,0, 200,200);
-		shapeRenderer.line(0, (height/5)*4, width, (height/5)*4);
-		
-		//shapeRenderer.rect(figure.getX(),figure.getY() , figure.getWidth(), figure.getHeight() );
-		shapeRenderer.end();*/
 		batcher.begin();
-		for (int i=0; i<handler.getObs().length; i++) {
-			if (handler.getObs()[i]!=null) batcher.draw(spikes[0], handler.getObs()[i].getX(),handler.getObs()[i].getY(),handler.getObs()[i].getWidth(),handler.getObs()[i].getHeight());
+		batcher.enableBlending();
+		if (!figure.getIsJumping() && !figure.getIsSliding()) {
+			batcher.draw(figureAnimation.getKeyFrame(runTime),figure.getX(), figure.getY(), figure.getWidth(), figure.getHeight());
+		} else if (figure.getIsJumping() || figure.getIsSliding()){
+			batcher.draw(AssetLoader.jumpAnimation.getKeyFrame(runTime), figure.getX(),figure.getY(), figure.getWidth(), figure.getHeight());
+		}		
+		String score = myWorld.getScore() +"";
+		AssetLoader.shadow.draw(batcher, score, width/2, 0);
+		AssetLoader.font.draw(batcher,score,width/2, 0);
+		
+		TextureRegion temp = null; 
+		
+		if (handler.getObstacle()!=null && handler.getObstacle() instanceof UpperObstacle) {
+			temp = AssetLoader.fSpikes[handler.getObstacle().getSpriteN()];
+		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle || handler.getObstacle() instanceof DoubleObstacle){
+			temp = AssetLoader.spikes[handler.getObstacle().getSpriteN()];
 		}
+		
+		if (handler.getObstacle()!=null) batcher.draw(temp, handler.getObstacle().getX(),handler.getObstacle().getY(),handler.getObstacle().getWidth(),handler.getObstacle().getHeight());
+		
+		
 		if (handler.getIsBoostActive()) batcher.draw(coinAnimation.getKeyFrame(runTime), handler.getBoost().getX(), handler.getBoost().getY(), handler.getBoost().getWidth(), handler.getBoost().getHeight());
 		batcher.end();
 	}
 
-	private void updateGameOver(float delta) {
+	private void updateGameOver(float delta, float runTime) {
 		// TODO Auto-generated method stub
+		batcher.begin();
+		String str = "Game Over your score is" + myWorld.getScore() +"Click to restart";
+		AssetLoader.shadow.draw(batcher, str, 0, height/2);
+		AssetLoader.font.draw(batcher, str, 0, height/2);
+		TextureRegion temp = null; 
 		
+		if (handler.getObstacle()!=null && handler.getObstacle() instanceof UpperObstacle) {
+			temp = AssetLoader.fSpikes[handler.getObstacle().getSpriteN()];
+		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle || handler.getObstacle() instanceof DoubleObstacle){
+			temp = AssetLoader.spikes[handler.getObstacle().getSpriteN()];
+		}
+		
+		if (handler.getObstacle()!=null) batcher.draw(temp, handler.getObstacle().getX(),handler.getObstacle().getY(),handler.getObstacle().getWidth(),handler.getObstacle().getHeight());
+		
+		
+		if (handler.getIsBoostActive()) batcher.draw(coinAnimation.getKeyFrame(runTime), handler.getBoost().getX(), handler.getBoost().getY(), handler.getBoost().getWidth(), handler.getBoost().getHeight());
+		
+		batcher.end();
 	}
 
 }

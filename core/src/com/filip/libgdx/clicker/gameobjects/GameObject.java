@@ -24,6 +24,7 @@ public abstract class GameObject {
 	protected void update(float delta) {
 		position.add(velocity.cpy().scl(delta));
 		boundingRect.setPosition(position);
+		boundingRect.setHeight(height);
 		
 	}
 	
@@ -45,6 +46,10 @@ public abstract class GameObject {
 	
 	public Rectangle getBoundingRect() {
 		return boundingRect;
+	}
+	
+	public float getVel() {
+		return velocity.x;
 	}
 	
 }

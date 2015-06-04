@@ -4,10 +4,12 @@ import jdk.internal.org.objectweb.asm.tree.JumpInsnNode;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -29,9 +31,13 @@ public class AssetLoader {
 	
 	public static TextureRegion[] tr2;
 	
-	public static TextureRegion[] spikes;
+	public static TextureRegion[] spikes, fSpikes;
 	
 	public static Preferences prefs;
+	
+	public static Sound coin;
+	
+	public static BitmapFont font, shadow;
 	
 	public static Animation jumpAnimation;
 	public static Animation idleAnimation;
@@ -41,6 +47,7 @@ public class AssetLoader {
 		if (!prefs.contains("coins")) {
 			prefs.putInteger("coins", 0);
 		}
+		
 		Texture texture = new Texture(Gdx.files.internal("data/play.png"));
 		Sprite sprite = new Sprite(texture);
 		sprite.setSize(width/4, height/10);
@@ -83,10 +90,12 @@ public class AssetLoader {
 		coinAnimation.setPlayMode(PlayMode.LOOP);
 		
 		spikes = new TextureRegion[4];
+		fSpikes = new TextureRegion[4];
 		for (int i=0; i<4;i++) {
 			texture = new Texture(Gdx.files.internal("data/spike"+String.valueOf(i+1)+".png"));
 			texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
 			spikes[i] = new TextureRegion(texture);
+			fSpikes[i] = new TextureRegion(texture);
 			spikes[i].flip(false, true);
 		}
 		
@@ -111,6 +120,13 @@ public class AssetLoader {
 		
 		idleAnimation = new Animation(0.2f, tr4);
 		idleAnimation.setPlayMode(PlayMode.LOOP);
+		
+		coin = Gdx.audio.newSound(Gdx.files.internal("data/coin.wav"));
+		
+		font = new BitmapFont(Gdx.files.internal("data/text.fnt"));
+		font.setScale(.5f, -.5f);
+		shadow = new BitmapFont(Gdx.files.internal("data/shadow.fnt"));
+		shadow.setScale(.5f, -.5f);
 	}
 	
 	public static int getCoins() {
@@ -123,5 +139,24 @@ public class AssetLoader {
 		prefs.putInteger("coins", val);
 		prefs.flush();
 	}
+
+	public static int getHiscore() {
+		// TODO Auto-generated method stub
+		return prefs.getInteger("hiscore");
+	}
+	
+	public static void setHiscore(int val) {
+		prefs.putInteger("hiscore", val);
+		prefs.flush();
+	}
+		
+	
+	private void dispose() {
+		// TODO Auto-generated method stub
+		font.dispose();
+		coin.dispose();
+		shadow.dispose();
+	}
+	
 
 }

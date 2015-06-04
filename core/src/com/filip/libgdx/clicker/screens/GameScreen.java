@@ -31,12 +31,12 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		// TODO Auto-generated method stub
-		if (gameSpeed<3 && world.getCurrentState()== GameState.RUNNING) gameSpeed += delta/6;
+		if (gameSpeed<3 && world.getCurrentState()== GameState.RUNNING) gameSpeed += delta/18;
 		runTime += delta;
 		if (world.getCurrentState()==GameState.RUNNING) runningTime += delta;
-		world.update(delta,gameSpeed,runTime, runningTime);
+		world.update(delta, gameSpeed, runTime, runningTime);
 		renderer.update(delta,gameSpeed,runTime);
-		
+				
 	}
 
 	@Override

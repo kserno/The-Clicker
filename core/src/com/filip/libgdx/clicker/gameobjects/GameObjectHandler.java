@@ -4,10 +4,11 @@ import java.util.Random;
 
 import com.badlogic.gdx.math.Intersector;
 import com.filip.libgdx.clicker.gameworld.GameWorld;
+import com.filip.libgdx.clicker.helpers.AssetLoader;
 
 public class GameObjectHandler {
 	
-	private Obstacle[] obs;
+	private Obstacle obstacle;
 	private Figure figure;
 	private Boost boost;
 	private int width, height;
@@ -16,16 +17,18 @@ public class GameObjectHandler {
 	private Ground ground;
 	private GameWorld world;
 	private Boolean isObsSpawned= false;
+	private int gap;
+	private Hole hole;
 	
 	public GameObjectHandler(int width, int height, GameWorld world) {
 		this.width = width;
 		this.height = height;
-		obs = new Obstacle[3];
-		figure = new Figure(width/7,height/32*22,width/10,height/7);
-		ground = new Ground(0, height/32*22+height/7, width, height/30);
+		figure = new Figure(width/7,height/32*22,width/10,height/6);
+		ground = new Ground(0, height/32*22+height/6, width, height/30);
 		r= new Random();
 		this.world = world;
 		isBoostActive = false;
+		gap = height/6/2;
 	}
 	
 	public void update(float delta, float runTime,float gameSpeed, float runningTime) {
@@ -56,11 +59,10 @@ public class GameObjectHandler {
 		// TODO Auto-generated method stub
 		spawnObjects(delta, runTime, gameSpeed,runningTime);
 		
-		figure.update(delta);
+		figure.update(delta,ground);
 		if (isBoostActive) boost.update(delta);
-		for (int i=0; i<obs.length; i++) {
-			if (obs[i]!=null) obs[i].update(delta);
-		}
+		if (obstacle!=null) obstacle.update(delta);
+		if (hole!=null) hole.update(delta, gameSpeed);
 		collisionCheck();
 	}
 
@@ -87,8 +89,13 @@ public class GameObjectHandler {
 	private void collisionCheck() {
 		// TODO Auto-generated method stub
 		if (isBoostActive&& Intersector.overlaps(boost.getBoundingRect(), figure.getBoundingRect())) {
-			if (boost instanceof Freeze) world.freeze();	
-			if (boost instanceof Coin) world.coinGained();
+			if (boost instanceof DoubleJump) {
+				world.doubleJumpGained();	
+			}
+			if (boost instanceof Coin) {
+				world.coinGained();
+				AssetLoader.coin.play();
+			}
 			boost = null;
 			isBoostActive = false;
 		}
@@ -96,10 +103,12 @@ public class GameObjectHandler {
 			boost = null;
 			isBoostActive = false;
 		}
-		for (int i =0; i<obs.length; i++) {
-			if (obs[i]!=null && Intersector.overlaps(obs[i].getBoundingRect(), figure.getBoundingRect())) figure.die();
-			if (obs[i]!=null && obs[i].getX()+obs[i].getWidth()<0) obs[i]= null;
-		}
+		
+		if (obstacle!=null && Intersector.overlaps(obstacle.getBoundingRect(), figure.getBoundingRect())) figure.die();
+		if (obstacle!=null && obstacle.getX()+obstacle.getWidth()<0) obstacle= null;
+		
+		if (hole!=null &&hole.getX()+hole.getWidth() <0) hole =null;
+		
 	}
 
 	private void spawnObjects(float delta, float runTime, float gameSpeed, float runningTime) {
@@ -108,58 +117,38 @@ public class GameObjectHandler {
 			isBoostActive = true;
 			switch(r.nextInt(2)) {
 			case 0 :
-				boost = new Coin(width,ground.getY()-figure.getHeight()*2,width/15, width/15);
+				boost = new Coin(ground,width,height, gameSpeed,gap);
 				break;
 			case 1 :
-				boost = new Freeze(width,ground.getY()-figure.getHeight()*2,width/15, width/15);
+				boost = new DoubleJump(ground,width,height, gameSpeed,gap);
 			break;			
 			}
 		}
-		int x=0;
-		for (int i =0; i<obs.length; i++) {
-			if (obs[i]==null) {
-				// TODO
-				x=i;
-				break;
+				 
+		
+		int x = (figure.getOneMoreJump()? 4 :3);
+		if (obstacle ==null && hole==null) {
+			switch (r.nextInt(x)) {
+				case 0:
+					obstacle = new LowerObstacle(ground, gameSpeed, height);
+					break;
+				case 1:
+					obstacle = new UpperObstacle(ground, gap, gameSpeed); // TODO
+					break;
+				
+				case 2:
+					hole = new Hole(ground,gameSpeed,width); // TODO
+					break;
+				case 3:
+					obstacle= new DoubleObstacle(ground, width, height, gameSpeed);
+					break;
+			
 			}
 		}
-		obs[x] = new LowerObstacle(width,ground.getY()-figure.getHeight()/3*2, width/10, width/10, gameSpeed); 
-		
-		/*if (runTime%(7f-gameSpeed)==0) { // handles spawning obstacles
-			switch (r.nextInt(3)) {
-			case 0:
-				for (int i =0; i<obs.length; i++) {
-					if (obs[i]!=null) {
-							obs[i] = new LowerObstacle(width,ground.getX(), width/15, figure.getHeight()/3*2); // TODO
-						break;
-					}
-				}
-				break;
-
-			case 1:
-				for (int i =0; i<obs.length; i++) {
-					if (obs[i]!=null) {
-							obs[i] = new UpperObstacle(); // TODO
-						break;
-					}
-				}
-				break;
-			case 2:
-				for (int i =0; i<obs.length; i++) {
-					if (obs[i]!=null) {
-							obs[i] = new DoubleObstacle(); // TODO
-						break;
-					}
-				}
-				break;
-			}
-			
-		}*/
-		
 	}
 
-	public Obstacle[] getObs() {
-		return obs;
+	public Obstacle getObstacle() {
+		return obstacle;
 	}
 	
 	public Figure getFigure() {
@@ -178,5 +167,20 @@ public class GameObjectHandler {
 		return boost;
 	}
 	
+	public Boolean getIsHoleActive() {
+		if (hole==null) return false;
+		return true;
+	}
+	
+	public Hole getHole() {
+		return hole;
+	}
+
+	public void restart() {
+		// TODO Auto-generated method stub
+		obstacle = null;
+		hole = null;
+		figure = new Figure(width/7,height/32*22,width/10,height/6);	
+	}
 	
 }

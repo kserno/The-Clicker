@@ -5,18 +5,10 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 
 public class LowerObstacle extends Obstacle {
-	
-	protected int spriteN;
 
-	public LowerObstacle(float x, float y,int width, int height, float gameSpeed) {
-		super(x, y, width, height, gameSpeed);
-		// TODO Auto-generated constructor stub
-		Random r = new Random();
-		spriteN = r.nextInt(4);
+	public LowerObstacle(Ground ground, float gameSpeed, int totalHeight) {
+		super(Gdx.graphics.getWidth(), ground.getY()- totalHeight/6, Gdx.graphics.getWidth()/10, totalHeight/6, gameSpeed);
 	}
 	
-	public int getSpriteN() {
-		return spriteN;
-	}
 
 }
