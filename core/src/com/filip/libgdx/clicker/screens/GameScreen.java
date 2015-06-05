@@ -36,6 +36,7 @@ public class GameScreen implements Screen {
 		if (world.getCurrentState()==GameState.RUNNING) runningTime += delta;
 		world.update(delta, gameSpeed, runTime, runningTime);
 		renderer.update(delta,gameSpeed,runTime);
+		if (world.getCurrentState()==GameState.GAMEOVER || world.getCurrentState()==GameState.HISCORE) gameSpeed = 1;
 				
 	}
 

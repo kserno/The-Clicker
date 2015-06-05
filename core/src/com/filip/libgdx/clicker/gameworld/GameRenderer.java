@@ -83,7 +83,6 @@ public class GameRenderer {
 		figureAnimation = AssetLoader.figureAnimation;	
 		background = AssetLoader.gBackground;
 		coinAnimation = AssetLoader.coinAnimation;
-		spikes = AssetLoader.spikes;
 	}
 	
 	public void update(float delta, float gameSpeed, float runTime) {
@@ -142,22 +141,25 @@ public class GameRenderer {
 	private void updateHiscore(float delta, float runTime) {
 		// TODO Auto-generated method stub
 		batcher.begin();
-		String str = "NEW HISCORE ! Your new hiscore is" + myWorld.getScore() +"Click to restart";
-		AssetLoader.shadow.draw(batcher, str, 0, height/2);
-		AssetLoader.font.draw(batcher, str, 0, height/2);
+		String str = "NEW HISCORE ! Your new hiscore is " + myWorld.getScore() +" Click to restart";
 		TextureRegion temp = null; 
 		
 		if (handler.getObstacle()!=null && handler.getObstacle() instanceof UpperObstacle) {
-			temp = AssetLoader.fSpikes[handler.getObstacle().getSpriteN()];
-		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle || handler.getObstacle() instanceof DoubleObstacle){
-			temp = AssetLoader.spikes[handler.getObstacle().getSpriteN()];
+			temp = AssetLoader.uObs;
+		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle){
+			temp = AssetLoader.lObs;
+		}  else if (handler.getObstacle()!=null && handler.getObstacle() instanceof DoubleObstacle) {
+			temp = AssetLoader.dObs;
 		}
+		
 		
 		if (handler.getObstacle()!=null) batcher.draw(temp, handler.getObstacle().getX(),handler.getObstacle().getY(),handler.getObstacle().getWidth(),handler.getObstacle().getHeight());
 		
 		
 		if (handler.getIsBoostActive()) batcher.draw(coinAnimation.getKeyFrame(runTime), handler.getBoost().getX(), handler.getBoost().getY(), handler.getBoost().getWidth(), handler.getBoost().getHeight());
 		
+		AssetLoader.shadow.draw(batcher, str, 0, height/2);
+		AssetLoader.font.draw(batcher, str, 0, height/2);
 		batcher.end();
 	}
 
@@ -165,9 +167,9 @@ public class GameRenderer {
 		// TODO Auto-generated method stub
 		batcher.begin();
 		String str = "Press any button";
-		AssetLoader.shadow.draw(batcher, str, 0, height/2);
-		AssetLoader.font.draw(batcher, str, 0, height/2);
 		batcher.draw(AssetLoader.idleAnimation.getKeyFrame(runTime), figure.getX(), figure.getY(), figure.getWidth(), figure.getHeight());
+		AssetLoader.shadow.draw(batcher, str, width/3, height/2);
+		AssetLoader.font.draw(batcher, str, width/3, height/2);
 		batcher.end();
 	}
 
@@ -175,49 +177,51 @@ public class GameRenderer {
 		// TODO Auto-generated method stub
 		batcher.begin();
 		batcher.enableBlending();
+		
 		if (!figure.getIsJumping() && !figure.getIsSliding()) {
 			batcher.draw(figureAnimation.getKeyFrame(runTime),figure.getX(), figure.getY(), figure.getWidth(), figure.getHeight());
 		} else if (figure.getIsJumping() || figure.getIsSliding()){
 			batcher.draw(AssetLoader.jumpAnimation.getKeyFrame(runTime), figure.getX(),figure.getY(), figure.getWidth(), figure.getHeight());
 		}		
 		String score = myWorld.getScore() +"";
-		AssetLoader.shadow.draw(batcher, score, width/2, 0);
-		AssetLoader.font.draw(batcher,score,width/2, 0);
-		
 		TextureRegion temp = null; 
 		
 		if (handler.getObstacle()!=null && handler.getObstacle() instanceof UpperObstacle) {
-			temp = AssetLoader.fSpikes[handler.getObstacle().getSpriteN()];
-		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle || handler.getObstacle() instanceof DoubleObstacle){
-			temp = AssetLoader.spikes[handler.getObstacle().getSpriteN()];
+			temp = AssetLoader.uObs;
+		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle){
+			temp = AssetLoader.lObs;
+		}  else if (handler.getObstacle()!=null && handler.getObstacle() instanceof DoubleObstacle) {
+			temp = AssetLoader.dObs;
 		}
 		
 		if (handler.getObstacle()!=null) batcher.draw(temp, handler.getObstacle().getX(),handler.getObstacle().getY(),handler.getObstacle().getWidth(),handler.getObstacle().getHeight());
-		
-		
 		if (handler.getIsBoostActive()) batcher.draw(coinAnimation.getKeyFrame(runTime), handler.getBoost().getX(), handler.getBoost().getY(), handler.getBoost().getWidth(), handler.getBoost().getHeight());
+		AssetLoader.shadow.draw(batcher, score, width/2, 0);
+		AssetLoader.font.draw(batcher,score,width/2, 0);
 		batcher.end();
 	}
 
 	private void updateGameOver(float delta, float runTime) {
 		// TODO Auto-generated method stub
 		batcher.begin();
-		String str = "Game Over your score is" + myWorld.getScore() +"Click to restart";
-		AssetLoader.shadow.draw(batcher, str, 0, height/2);
-		AssetLoader.font.draw(batcher, str, 0, height/2);
+		String str = "Game Over your score is " + myWorld.getScore() +" Click to restart";
 		TextureRegion temp = null; 
 		
 		if (handler.getObstacle()!=null && handler.getObstacle() instanceof UpperObstacle) {
-			temp = AssetLoader.fSpikes[handler.getObstacle().getSpriteN()];
-		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle || handler.getObstacle() instanceof DoubleObstacle){
-			temp = AssetLoader.spikes[handler.getObstacle().getSpriteN()];
+			temp = AssetLoader.uObs;
+		} else if (handler.getObstacle()!=null && handler.getObstacle() instanceof LowerObstacle){
+			temp = AssetLoader.lObs;
+		}  else if (handler.getObstacle()!=null && handler.getObstacle() instanceof DoubleObstacle) {
+			temp = AssetLoader.dObs;
 		}
+		
 		
 		if (handler.getObstacle()!=null) batcher.draw(temp, handler.getObstacle().getX(),handler.getObstacle().getY(),handler.getObstacle().getWidth(),handler.getObstacle().getHeight());
 		
-		
 		if (handler.getIsBoostActive()) batcher.draw(coinAnimation.getKeyFrame(runTime), handler.getBoost().getX(), handler.getBoost().getY(), handler.getBoost().getWidth(), handler.getBoost().getHeight());
 		
+		AssetLoader.shadow.draw(batcher, str, 0, height/2);
+		AssetLoader.font.draw(batcher, str, 0, height/2);
 		batcher.end();
 	}
 

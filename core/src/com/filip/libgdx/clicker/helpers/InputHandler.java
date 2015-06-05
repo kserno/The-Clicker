@@ -27,6 +27,9 @@ public class InputHandler implements InputProcessor{
 		if (world.getCurrentState() == GameState.READY) {
 			world.start();
 		}
+		if (world.getCurrentState() == GameState.GAMEOVER || world.getCurrentState() == GameState.HISCORE) {
+			world.restart();
+		}
 		return false;
 	}
 

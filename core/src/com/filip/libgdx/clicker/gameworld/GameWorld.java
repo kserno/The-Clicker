@@ -12,6 +12,7 @@ public class GameWorld {
 	private int width;
 	private GameObjectHandler handler;
 	private float score;
+	private Boolean gameOver= false;
 	public enum GameState {
 		READY, RUNNING, GAMEOVER,PAUSE ,HISCORE
 	}
@@ -30,7 +31,12 @@ public class GameWorld {
 	public void update(float delta,float gameSpeed,float runTime, float runningTime) {
 		// TODO Auto-generated method stub
 		handler.update(delta, runTime, gameSpeed, runningTime);
-		score += gameSpeed/(1/delta);
+		if (currentState== GameState.RUNNING) score += gameSpeed/(1/delta);
+		if (!gameOver &&!handler.getFigure().getIsAlive()) {
+			gameOver();
+			gameOver=true;
+		}
+
 	}
 	
 	public GameState getCurrentState() {
@@ -84,9 +90,9 @@ public class GameWorld {
 	}
 	
 	public void restart() {
-		currentState= GameState.READY;
-		handler.restart();
+		currentState = GameState.READY;
 		score = 0;
+		handler.restart();
 	}
 	
 }

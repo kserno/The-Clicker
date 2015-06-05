@@ -14,7 +14,6 @@ public class DesktopLauncher {
 		config.title = "The Clicker";
 		config.width=800;
 		config.height=600;
-		config.addIcon("data/icon.png", Files.FileType.Internal);
 		new LwjglApplication(new MainClass(), config);
 	}
 }

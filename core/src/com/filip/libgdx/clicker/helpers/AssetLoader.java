@@ -30,10 +30,10 @@ public class AssetLoader {
 	public static Animation coinAnimation;
 	
 	public static TextureRegion[] tr2;
-	
-	public static TextureRegion[] spikes, fSpikes;
-	
+		
 	public static Preferences prefs;
+	
+	public static TextureRegion uObs, lObs, dObs;
 	
 	public static Sound coin;
 	
@@ -89,15 +89,6 @@ public class AssetLoader {
 		coinAnimation=  new Animation(0.07f, tr2);
 		coinAnimation.setPlayMode(PlayMode.LOOP);
 		
-		spikes = new TextureRegion[4];
-		fSpikes = new TextureRegion[4];
-		for (int i=0; i<4;i++) {
-			texture = new Texture(Gdx.files.internal("data/spike"+String.valueOf(i+1)+".png"));
-			texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
-			spikes[i] = new TextureRegion(texture);
-			fSpikes[i] = new TextureRegion(texture);
-			spikes[i].flip(false, true);
-		}
 		
 		TextureRegion[] tr3 = new TextureRegion[8];
 		texture = new Texture(Gdx.files.internal("data/jump.png"));
@@ -121,12 +112,22 @@ public class AssetLoader {
 		idleAnimation = new Animation(0.2f, tr4);
 		idleAnimation.setPlayMode(PlayMode.LOOP);
 		
+		texture = new Texture(Gdx.files.internal("data/spike1.png"));
+		lObs = new TextureRegion(texture);
+		lObs.flip(false, true);
+		
+		texture = new Texture(Gdx.files.internal("data/spike2.png"));
+		uObs = new TextureRegion(texture);
+		dObs = new TextureRegion(texture);
+		dObs.flip(false , true);
+		
+		
 		coin = Gdx.audio.newSound(Gdx.files.internal("data/coin.wav"));
 		
 		font = new BitmapFont(Gdx.files.internal("data/text.fnt"));
-		font.setScale(.5f, -.5f);
+		font.setScale(.4f, -.4f);
 		shadow = new BitmapFont(Gdx.files.internal("data/shadow.fnt"));
-		shadow.setScale(.5f, -.5f);
+		shadow.setScale(.4f, -.4f);
 	}
 	
 	public static int getCoins() {

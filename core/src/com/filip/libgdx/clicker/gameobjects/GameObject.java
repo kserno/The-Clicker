@@ -1,5 +1,6 @@
 package com.filip.libgdx.clicker.gameobjects;
 
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -12,19 +13,21 @@ public abstract class GameObject {
 	
 	protected Rectangle boundingRect;
 	
+	
 	public GameObject(float x, float y, int width, int height) {
 		position = new Vector2(x,y);
 		velocity = new Vector2(0,0);
 		this.width = width;
 		this.height = height;
 		boundingRect = new Rectangle(x, y, width, height);
-				
+		
 	}
 	
 	protected void update(float delta) {
 		position.add(velocity.cpy().scl(delta));
 		boundingRect.setPosition(position);
 		boundingRect.setHeight(height);
+		boundingRect.setWidth(width);
 		
 	}
 	
@@ -48,8 +51,6 @@ public abstract class GameObject {
 		return boundingRect;
 	}
 	
-	public float getVel() {
-		return velocity.x;
-	}
+	
 	
 }

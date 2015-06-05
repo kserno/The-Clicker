@@ -12,7 +12,7 @@ public class Figure extends GameObject  {
 	
 	private Boolean isJumping= false;
 	private Boolean isSliding=false;
-	private boolean isAlive;
+	private boolean isAlive=true;
 	private float slideTime;
 	
 	private Boolean oneMoreJump;
@@ -51,12 +51,12 @@ public class Figure extends GameObject  {
 	public void jump() {
 		// TODO Auto-generated method stub
 		if (isJumping && oneMoreJump) {
-			velocity.y = -400;
+			velocity.y = -550;
 			oneMoreJump = false;
 		}
 		if (!isJumping && !isSliding ) {
 			isJumping= true;
-			velocity.y = -400;		
+			velocity.y = -550;		
 		}
 	}
 	
@@ -93,4 +93,12 @@ public class Figure extends GameObject  {
 	public Boolean getOneMoreJump() {
 		return oneMoreJump;
 	}
+
+	public void restart() {
+		// TODO Auto-generated method stub
+		position.y = startingY;
+		isAlive=true;
+		
+	}
+
 }

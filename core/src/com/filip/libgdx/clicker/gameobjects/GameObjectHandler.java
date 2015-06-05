@@ -58,9 +58,9 @@ public class GameObjectHandler {
 	private void updateRunning(float delta, float runTime, float gameSpeed,float runningTime) {
 		// TODO Auto-generated method stub
 		spawnObjects(delta, runTime, gameSpeed,runningTime);
-		
 		figure.update(delta,ground);
-		if (isBoostActive) boost.update(delta);
+		
+		if (isBoostActive && boost!=null) boost.update(delta);
 		if (obstacle!=null) obstacle.update(delta);
 		if (hole!=null) hole.update(delta, gameSpeed);
 		collisionCheck();
@@ -88,6 +88,7 @@ public class GameObjectHandler {
 
 	private void collisionCheck() {
 		// TODO Auto-generated method stub
+		System.out.println(figure.getY());
 		if (isBoostActive&& Intersector.overlaps(boost.getBoundingRect(), figure.getBoundingRect())) {
 			if (boost instanceof DoubleJump) {
 				world.doubleJumpGained();	
@@ -103,7 +104,7 @@ public class GameObjectHandler {
 			boost = null;
 			isBoostActive = false;
 		}
-		
+		if (hole!=null && figure.getX() > hole.getX() && figure.getX() + figure.getWidth() < hole.getX() + hole.getWidth() && hole.getY() >= figure.getY()) figure.die();
 		if (obstacle!=null && Intersector.overlaps(obstacle.getBoundingRect(), figure.getBoundingRect())) figure.die();
 		if (obstacle!=null && obstacle.getX()+obstacle.getWidth()<0) obstacle= null;
 		
@@ -180,7 +181,10 @@ public class GameObjectHandler {
 		// TODO Auto-generated method stub
 		obstacle = null;
 		hole = null;
-		figure = new Figure(width/7,height/32*22,width/10,height/6);	
+		boost = null;
+		isBoostActive = false;
+		figure.restart();
+		
 	}
 	
 }
