@@ -88,7 +88,6 @@ public class GameObjectHandler {
 
 	private void collisionCheck() {
 		// TODO Auto-generated method stub
-		System.out.println(figure.getY());
 		if (isBoostActive&& Intersector.overlaps(boost.getBoundingRect(), figure.getBoundingRect())) {
 			if (boost instanceof DoubleJump) {
 				world.doubleJumpGained();	
